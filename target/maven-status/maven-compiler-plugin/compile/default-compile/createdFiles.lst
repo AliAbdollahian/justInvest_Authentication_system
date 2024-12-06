@@ -1,0 +1,8 @@
+org/example/Main.class
+org/example/AccessControlManager.class
+org/example/RolePermissions.class
+org/example/UIManager.class
+org/example/PasswordManager.class
+org/example/Role.class
+org/example/Operations.class
+org/example/EnrolUsers.class
