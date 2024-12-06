@@ -7,7 +7,7 @@ import java.security.SecureRandom;
 import java.util.*;
 
 public class PasswordManager {
-    private static final String FILE_PATH = "passwd.txt";
+    private static final String FILE_PATH = "/Users/ali/Documents/SYSC4810/justInvest _authentication_system/src/main/resources/passwd.txt";
     public Argon2 argon2;
     private final Set<String> worstPasswords;
 
@@ -57,16 +57,19 @@ public class PasswordManager {
         }
         return null;
     }
-    private void loadWorstPasswords(String filePath) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+    private void loadWorstPasswords(String resourceName) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourceName);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 worstPasswords.add(line.trim());
             }
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             System.err.println("Error loading worst passwords list: " + e.getMessage());
         }
     }
+
+
     public boolean proActivePasswordChecker(String password) {
         if (password.length() < 8) {
             System.out.println("Password must be at least 8 characters long.");

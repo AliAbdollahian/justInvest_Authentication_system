@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -7,32 +6,33 @@
     <groupId>org.example</groupId>
     <artifactId>justInvest</artifactId>
     <version>1.0-SNAPSHOT</version>
+
     <dependencies>
+        <!-- JUnit dependency for testing (only include one version) -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Argon2 dependency for password hashing -->
         <dependency>
             <groupId>de.mkammerer</groupId>
             <artifactId>argon2-jvm</artifactId>
             <version>2.11</version>
         </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
+
     <properties>
         <maven.compiler.source>20</maven.compiler.source>
         <maven.compiler.target>20</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <build>
         <plugins>
+            <!-- Maven JAR Plugin for creating the JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -40,11 +40,42 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.example.Main</mainClass>
+                            <mainClass>org.example.Main</mainClass> <!-- Main class for your app -->
                         </manifest>
                     </archive>
                 </configuration>
             </plugin>
+
+            <!-- Maven Shade Plugin to bundle dependencies in the JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+
+        <!-- Specify resources (text files, CSVs, etc.) to include in the JAR -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>  <!-- Default location for resources -->
+                <includes>
+                    <include>passwd.txt</include>  <!-- Include all .txt files -->
+                    <include>roles.csv</include>  <!-- Include all .csv files -->
+                    <include>10k-worst-passwords.txt</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
+
 </project>
+
+
+

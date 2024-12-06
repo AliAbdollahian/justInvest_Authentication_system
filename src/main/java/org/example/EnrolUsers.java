@@ -1,12 +1,13 @@
 package org.example;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Scanner;
 
 public class EnrolUsers {
-    private static final String ROLES_FILE = "roles.csv";
+    private static final String ROLES_FILE = "/Users/ali/Documents/SYSC4810/justInvest _authentication_system/src/main/resources/roles.csv";
     PasswordManager pm = new PasswordManager();
 
     private static final Map<Integer, String> ROLES = Map.of(
@@ -44,11 +45,22 @@ public class EnrolUsers {
     }
 
     private void saveUserRole(String username, String role) {
-        try (FileWriter writer = new FileWriter(ROLES_FILE, true)) {
+        String writablePath = getWritableFilePath(ROLES_FILE);
+        try (FileWriter writer = new FileWriter(writablePath, true)) {
             writer.append(username).append(",").append(role).append("\n");
         } catch (IOException e) {
             System.err.println("Error saving role to file: " + e.getMessage());
         }
     }
+
+    private String getWritableFilePath(String fileName) {
+        String userHome = System.getProperty("user.home"); // User's home directory
+        String appDir = userHome + File.separator + "justInvest"; // App-specific directory
+        File dir = new File(appDir);
+        if (!dir.exists()) dir.mkdirs(); // Create directory if not exists
+        return appDir + File.separator + fileName;
+    }
+
+
 }
 
