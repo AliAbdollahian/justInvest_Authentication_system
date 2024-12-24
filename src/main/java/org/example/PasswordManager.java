@@ -7,14 +7,14 @@ import java.security.SecureRandom;
 import java.util.*;
 
 public class PasswordManager {
-    private static final String FILE_PATH = "/Users/ali/Documents/SYSC4810/justInvest _authentication_system/src/main/resources/passwd.txt";
+    private static final String FILE_PATH = "passwd.txt";
     public Argon2 argon2;
     private final Set<String> worstPasswords;
 
     public PasswordManager() {
         argon2 = Argon2Factory.create();
         this.worstPasswords = new HashSet<>();
-        loadWorstPasswords("10k-worst-passwords.txt");
+        loadWorstPasswords();
     }
     public String hashPassword(String password, String salt){
         return argon2.hash(2, 65536, 1, password + salt);
@@ -57,14 +57,13 @@ public class PasswordManager {
         }
         return null;
     }
-    private void loadWorstPasswords(String resourceName) {
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourceName);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)))) {
+    private void loadWorstPasswords() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("10k-worst-passwords.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 worstPasswords.add(line.trim());
             }
-        } catch (IOException | NullPointerException e) {
+        } catch (IOException e) {
             System.err.println("Error loading worst passwords list: " + e.getMessage());
         }
     }

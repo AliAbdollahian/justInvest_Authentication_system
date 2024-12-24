@@ -1,13 +1,13 @@
 package org.example;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
 public class EnrolUsers {
-    private static final String ROLES_FILE = "/Users/ali/Documents/SYSC4810/justInvest _authentication_system/src/main/resources/roles.csv";
+    private static final String ROLES_FILE = "roles.csv";
     PasswordManager pm = new PasswordManager();
 
     private static final Map<Integer, String> ROLES = Map.of(
@@ -45,22 +45,46 @@ public class EnrolUsers {
     }
 
     private void saveUserRole(String username, String role) {
-        String writablePath = getWritableFilePath(ROLES_FILE);
-        try (FileWriter writer = new FileWriter(writablePath, true)) {
+        try (FileWriter writer = new FileWriter(ROLES_FILE, true)) {
             writer.append(username).append(",").append(role).append("\n");
         } catch (IOException e) {
             System.err.println("Error saving role to file: " + e.getMessage());
         }
     }
+    public void enrolUser(String username, String password, String role) {
+        if (!ROLES.containsKey(role)) {
+            System.out.println("Invalid role: " + role + ". Skipping user: " + username);
+            return;
+        }
 
-    private String getWritableFilePath(String fileName) {
-        String userHome = System.getProperty("user.home"); // User's home directory
-        String appDir = userHome + File.separator + "justInvest"; // App-specific directory
-        File dir = new File(appDir);
-        if (!dir.exists()) dir.mkdirs(); // Create directory if not exists
-        return appDir + File.separator + fileName;
+        pm.addUser(username, password);
+        saveUserRole(username, role);
+        System.out.println("User " + username + " enrolled successfully with role: " + role);
     }
 
+    public void bulkEnrollUsers() {
+        String defaultPassword = "defaultPassword123@";
+        List<String[]> users = List.of(
+                new String[]{"Sasha Kim", "CLIENT"},
+                new String[]{"Emery Blake", "CLIENT"},
+                new String[]{"Noor Abbasi", "PREMIUM_CLIENT"},
+                new String[]{"Zuri Adebayo", "PREMIUM_CLIENT"},
+                new String[]{"Mikael Chen", "FINANCIAL_ADVISOR"},
+                new String[]{"Jordan Riley", "FINANCIAL_ADVISOR"},
+                new String[]{"Ellis Nakamura", "FINANCIAL_PLANNER"},
+                new String[]{"Harper Diaz", "FINANCIAL_PLANNER"},
+                new String[]{"Alex Hayes", "TELLER"},
+                new String[]{"Adair Patel", "TELLER"}
+        );
 
+        for (String[] user : users) {
+            String username = user[0];
+            String role = user[1];
+            // Directly pass the role without validation
+            pm.addUser(username, defaultPassword); // Add user to PasswordManager
+            saveUserRole(username, role); // Save user-role mapping
+            System.out.println("User " + username + " enrolled successfully with role: " + role);
+        }
+    }
 }
 
